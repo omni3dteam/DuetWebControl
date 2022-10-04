@@ -212,6 +212,24 @@ a:not(:hover) {
 					</v-col>
 				</v-row>
 			</template>
+
+			<!-- IP address field, read from ObjectModel network.interfaces[0/1].actialIP -->
+			<template v-if="network">
+				<v-divider v-show="move.axes.length || move.extruders.length || isNumber(move.currentMove.requestedSpeed) || isNumber(move.currentMove.topSpeed) || sensorsPresent" class="my-2"></v-divider>
+
+				<v-row align-content="center" no-gutters class="flex-nowrap">
+					<v-col tag="strong" class="category-header">
+						<!-- TODO: add translations to panel.status.ip -->
+						{{ $t('panel.status.ip') }}
+					</v-col>
+
+					<v-col class="d-flex flex-column align-center">
+						<!-- TODO: display network name and connection type -->
+						{{ $display(ipAddress) }}
+					</v-col>
+				</v-row>
+			</template>
+
 		</v-card-text>
 
 		<v-card-text class="pa-0" v-show="!sensorsPresent && !(move.axes.length + move.extruders.length)">
@@ -238,6 +256,7 @@ export default {
 			fans: state => state.fans,
 			move: state => state.move,
 			machineMode: state => state.state.machineMode,
+			network: state => state.network,
 			sensors: state => state.sensors,
 			status: state => state.state.status
 		}),
@@ -249,6 +268,9 @@ export default {
 					name: fan.name || this.$t('panel.fan.fan', [index]),
 					rpm: fan.rpm
 				}), this);
+		},
+		ipAddress() {
+			return this.network.interfaces[1].actualIP ? this.network.interfaces[1].actualIP : this.network.interfaces[0].actualIP;
 		},
 		probesPresent() {
 			return this.sensors.probes.some(probe => probe && probe.type !== ProbeType.none);

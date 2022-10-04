@@ -776,6 +776,7 @@
       "machinePosition": "Machine Position",
       "extruders": "Extruder Drives",
       "extruderDrive": "Drive {0}",
+      "ip": "IP address",
       "speeds": "Speeds",
       "requestedSpeed": "Requested Speed",
       "topSpeed": "Top Speed",
