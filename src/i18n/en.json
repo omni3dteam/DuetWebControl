@@ -735,6 +735,15 @@
       "moveFeedrate": "Feedrate for move buttons ({0})",
       "toolChangeMacros": "Tool change macros"
     },
+    "settingsNetwork": {
+      "caption": "Network",
+      "gateway": "Gateway",
+      "ip": "IP address",
+      "netmask": "Netmask",
+      "pass": "Password",
+      "ssid": "SSID",
+      "staticIp": "Static IP"
+    },
     "settingsNotifications": {
       "caption": "Notifications",
       "notificationErrorsPersistent": "Do not close error messages automatically",
@@ -776,7 +785,6 @@
       "machinePosition": "Machine Position",
       "extruders": "Extruder Drives",
       "extruderDrive": "Drive {0}",
-      "ip": "IP address",
       "speeds": "Speeds",
       "requestedSpeed": "Requested Speed",
       "topSpeed": "Top Speed",
@@ -787,7 +795,10 @@
       "v12": "V12",
       "fanRPM": "Fan RPM",
       "probe": "Z-Probe|Z-Probes",
-      "noStatus": "No Status"
+      "noStatus": "No Status",
+      "network": "Network",
+      "ip": "IP address",
+      "interface": "Interface"
     },
     "tools": {
       "caption": "Tools",

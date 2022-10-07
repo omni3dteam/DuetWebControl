@@ -214,18 +214,47 @@ a:not(:hover) {
 			</template>
 
 			<!-- IP address field, read from ObjectModel network.interfaces[0/1].actialIP -->
-			<template v-if="network">
+			<template v-if="network.interfaces">
 				<v-divider v-show="move.axes.length || move.extruders.length || isNumber(move.currentMove.requestedSpeed) || isNumber(move.currentMove.topSpeed) || sensorsPresent" class="my-2"></v-divider>
 
 				<v-row align-content="center" no-gutters class="flex-nowrap">
 					<v-col tag="strong" class="category-header">
 						<!-- TODO: add translations to panel.status.ip -->
-						{{ $t('panel.status.ip') }}
+						{{ $t('panel.status.network') }}
 					</v-col>
 
-					<v-col class="d-flex flex-column align-center">
-						<!-- TODO: display network name and connection type -->
-						{{ $display(ipAddress) }}
+					<!-- TODO: display network name and connection type -->
+					<v-col>
+						<v-row align-content="center" no-gutters>
+							<v-col class="d-flex flex-column align-center">
+								<strong>
+									{{ $t('panel.status.interface') }}
+								</strong>
+								<span>
+									{{ $display(webInterface) }}
+								</span>
+							</v-col>
+
+							<template v-if="wifiEnabled">
+								<v-col class="d-flex flex-column align-center">
+									<strong>
+										{{ "SSID" }}
+									</strong>
+									<span>
+										{{ $display(printSsid) }}
+									</span>
+								</v-col>
+							</template>
+
+							<v-col class="d-flex flex-column align-center">
+								<strong>
+									{{ $t('panel.status.ip') }}
+								</strong>
+								<span>
+									{{ $display(ipAddress) }}
+								</span>
+							</v-col>
+						</v-row>
 					</v-col>
 				</v-row>
 			</template>
@@ -243,7 +272,7 @@ a:not(:hover) {
 <script>
 'use strict'
 
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import { ProbeType, isPrinting } from '../../store/machine/modelEnums.js'
 import { UnitOfMeasure } from '../../store/settings.js'
@@ -270,7 +299,16 @@ export default {
 				}), this);
 		},
 		ipAddress() {
-			return this.network.interfaces[1].actualIP ? this.network.interfaces[1].actualIP : this.network.interfaces[0].actualIP;
+			if (this.network.interfaces.length) {
+				return (this.network.interfaces[1] && this.network.interfaces[1].actualIP) ? this.network.interfaces[1].actualIP :
+				this.network.interfaces[0].actualIP;
+			}
+			//TODO: add translation
+			return "Not connected"
+		},
+		printSsid() {
+			this.getSsid()
+			return this.ssid
 		},
 		probesPresent() {
 			return this.sensors.probes.some(probe => probe && probe.type !== ProbeType.none);
@@ -287,14 +325,22 @@ export default {
 		},
 		visibleAxes() {
 			return this.move.axes.filter(axis => axis.visible);
+		},
+		webInterface() {
+			return this.wifiEnabled ? "WiFi" : "Ethernet";
+		},
+		wifiEnabled() {
+			return this.network.interfaces.length > 1 ? (this.network.interfaces[1].state === "active") : false;
 		}
 	},
 	data() {
 		return {
-			displayToolPosition: true
+			displayToolPosition: true,
+			ssid: ''
 		}
 	},
 	methods: {
+		...mapActions('machine', ['sendCode']),
         displayAxisPosition(axis) {
             const position = (this.displayToolPosition ? axis.userPosition : axis.machinePosition) /
 							((this.displayUnits === UnitOfMeasure.imperial) ? 25.4 : 1);
@@ -333,7 +379,34 @@ export default {
 				}
 			}
 			return result;
-		}
+		},
+		async getSsid() {
+			if (!this.isConnected) {
+				return;
+			}
+
+			let success = true, response, begin, end;
+			try {
+				response = await this.sendCode({ code: `M587`, log: false });
+				success = response.indexOf('Error') === -1;
+			} catch (e) {
+				response = e.message;
+				success = false;
+			}
+
+			// Deal with the result
+			if (success) {
+				//search for network name in response
+				const beginStr = 'networks:\n';
+				const endStr = '\nIP=';
+				begin = response.indexOf(beginStr);
+				if (begin > 0) {
+					begin += beginStr.length;
+				}
+				end = response.indexOf(endStr);
+				this.ssid = response.substr(begin, end-begin);
+			}
+		},
 	}
 }
 </script>

@@ -57,6 +57,16 @@ export default {
 			flip: 'none'
 		},
 
+		network: {
+			ssid: '',
+			pass: '',
+			ip: '',
+			netmask: '',
+			gateway: '',
+			staticIp: false,
+			wifiEnabled: true
+		},
+
 		enabledPlugins: ['Height Map'],
 		plugins: {}									    // Third-party values
 	},

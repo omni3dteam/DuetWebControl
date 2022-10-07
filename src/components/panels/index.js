@@ -19,6 +19,7 @@ import SettingsElectronicsPanel from './SettingsElectronicsPanel.vue'
 import SettingsGeneralPanel from './SettingsGeneralPanel.vue'
 import SettingsListItemsPanel from './SettingsListItemsPanel.vue'
 import SettingsMachinePanel from './SettingsMachinePanel.vue'
+import SettingsNetworkPanel from './SettingsNetworkPanel.vue'
 import SettingsNotificationsPanel from './SettingsNotificationsPanel.vue'
 import SettingsWebcamPanel from './SettingsWebcamPanel.vue'
 import SpeedFactorPanel from './SpeedFactorPanel.vue'
@@ -50,6 +51,7 @@ Vue.component('settings-communication-panel', SettingsCommunicationPanel)
 Vue.component('settings-electronics-panel', SettingsElectronicsPanel)
 Vue.component('settings-general-panel', SettingsGeneralPanel)
 Vue.component('settings-machine-panel', SettingsMachinePanel)
+Vue.component('settings-network-panel', SettingsNetworkPanel)
 Vue.component('settings-list-items-panel', SettingsListItemsPanel)
 Vue.component('settings-notifications-panel', SettingsNotificationsPanel)
 Vue.component('settings-webcam-panel', SettingsWebcamPanel)
