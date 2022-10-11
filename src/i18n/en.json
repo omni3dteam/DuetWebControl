@@ -742,7 +742,10 @@
       "netmask": "Netmask",
       "pass": "Password",
       "ssid": "SSID",
-      "staticIp": "Static IP"
+      "staticIp": "Static IP",
+      "ipInvalid": "Static IP values invalid",
+      "passErrorTitle": "Password error",
+      "passError": "Password too short"
     },
     "settingsNotifications": {
       "caption": "Notifications",
