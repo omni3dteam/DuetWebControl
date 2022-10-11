@@ -30,19 +30,26 @@
 </style>
 
 <template>
-	<div ref="keyboard" v-if="input" class="simple-keyboard" @click.stop.prevent=""></div>
+	<div ref="keyboard" v-if="enabled" class="simple-keyboard" @click.stop.prevent=""></div>
 </template>
 
 <script>
 'use strict'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import Keyboard from 'simple-keyboard'
 import 'simple-keyboard/build/css/index.css'
 
 export default {
-	computed: mapState('settings', ['darkTheme']),
+	computed: {
+		...mapState('settings', ['darkTheme']),
+		...mapState('machine/model', ['network']),
+		...mapGetters('machine', ['connector']),
+		enabled() {
+			return (this.network.hostname === (this.connector ? this.connector.hostname : location.hostname)) ? this.input : null;
+		}
+	},
 	data() {
 		return {
 			input: null,
