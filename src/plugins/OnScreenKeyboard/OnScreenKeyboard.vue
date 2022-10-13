@@ -30,7 +30,7 @@
 </style>
 
 <template>
-	<div ref="keyboard" v-if="enabled" class="simple-keyboard" @click.stop.prevent=""></div>
+	<div ref="keyboard" v-if="verifiedInput" class="simple-keyboard" @click.stop.prevent=""></div>
 </template>
 
 <script>
@@ -46,8 +46,11 @@ export default {
 		...mapState('settings', ['darkTheme']),
 		...mapState('machine/model', ['network']),
 		...mapGetters('machine', ['connector']),
-		enabled() {
-			return (this.network.hostname === (this.connector ? this.connector.hostname : location.hostname)) ? this.input : null;
+		verifiedInput() {
+			return this.isLcd ? this.input : null;
+		},
+		isLcd() {
+			return this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
 		}
 	},
 	data() {
@@ -57,7 +60,7 @@ export default {
 		}
 	},
 	mounted() {
-		window.disableCodeMirror = true;
+		//window.disableCodeMirror = true;
 		window.addEventListener('focusin', this.inputFocused);
 		window.addEventListener('click', this.globalClick);
 	},
@@ -67,6 +70,9 @@ export default {
 	},
 	methods: {
 		inputFocused(e) {
+			if (!this.isLcd) {
+				return;
+			}
 			if (e.target !== this.input && (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
 				this.input = e.target;
 				this.$nextTick(function() {
