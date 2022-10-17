@@ -9,7 +9,7 @@
 		</v-card-title>
 
 		<v-card-text class="pt-0">
-			{{ $t('panel.settingsAbout.developedBy') }} <a href="mailto:christian@duet3d.com">Christian Hammacher</a> {{ $t('panel.settingsAbout.for') }} <a href="https://www.duet3d.com" target="_blank">Duet3D</a>.
+			{{ $t('panel.settingsAbout.developedBy')}} <a href="mailto:christian@duet3d.com">Christian Hammacher</a> {{ $t('panel.settingsAbout.for') }} <a href="https://www.duet3d.com" target="_blank">Duet3D</a> & <a href="https://www.omni3d.com" target="_blank">Omni3D</a>.
 			<br>
 			{{ $t('panel.settingsAbout.licensedUnder') }} <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public License v3</a>
 		</v-card-text>
