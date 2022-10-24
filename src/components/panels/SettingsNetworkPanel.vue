@@ -73,42 +73,13 @@
 <script>
 'use strict'
 
-import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
 	computed: {
 		...mapState(['settings']),
 		...mapState('machine/model', ['network']),
-		...mapGetters('machine', ['connector']),
-
-		gateway: {
-			get() { return this.settings.network.gateway; },
-			set(value) { this.update({ network: { gateway: value } }); }
-		},
-		ip: {
-			get() { return this.settings.network.ip; },
-			set(value) { this.update({ network: { ip: value } }); }
-		},
-		netmask: {
-			get() { return this.settings.network.netmask; },
-			set(value) { this.update({ network: { netmask: value } }); }
-		},
-		pass: {
-			get() { return this.settings.network.pass; },
-			set(value) { this.update({ network: { pass: value } }); }
-		},
-        ssid: {
-			get() { return this.settings.network.ssid; },
-			set(value) { this.update({ network: { ssid: value } }); }
-		},
-		wifiEnabled: {
-			get() { return this.settings.network.wifiEnabled; },
-			set(value) { this.update({ network: { wifiEnabled: value } }); }
-		},
-		staticIp: {
-			get() { return this.settings.network.staticIp; },
-			set(value) { this.update({ network: { staticIp: value } }); }
-		}
+		...mapState(['selectedMachine'])
 	},
 	data() {
 		return {
@@ -119,6 +90,13 @@ export default {
 				min: v => v.length >= 8 || 'Min 8 characters',
 				//TODO: add translations
 			},
+			staticIp: false,
+			wifiEnabled: true,
+			ssid: '',
+			pass: '',
+			ip: '',
+			netmask: '',
+			gateway: ''
 		}
 	},
 	methods: {
@@ -197,7 +175,46 @@ export default {
 				return true;
 			}
 			return false;
-		}  
+		},
+		async updateValues() {
+			let success = true, response, begin, end;
+
+			try {
+				response = await this.sendCode({ code: `M587`, log: false });
+				success = response.indexOf('Error') === -1;
+			} catch (e) {
+				response = e.message;
+				success = false;
+			}
+
+			// Deal with the result
+			if (success) {
+				//search for network name in response
+				const beginStr = 'networks:\n';
+				const endStr = '\nIP=';
+				begin = response.indexOf(beginStr);
+				if (begin > 0) {
+					begin += beginStr.length;
+				}
+				end = response.indexOf(endStr);
+				this.ssid = response.substr(begin, end-begin);
+			}
+
+			if (this.network.interfaces.length) {
+				this.ip = (this.network.interfaces[1] && this.network.interfaces[1].actualIP) ? this.network.interfaces[1].actualIP : this.network.interfaces[0].actualIP;
+				this.netmask = (this.network.interfaces[1] && this.network.interfaces[1].subnet) ? this.network.interfaces[1].subnet : this.network.interfaces[0].subnet;
+				this.gateway = (this.network.interfaces[1] && this.network.interfaces[1].gateway) ? this.network.interfaces[1].gateway : this.network.interfaces[0].gateway;
+				this.wifiEnabled = this.network.interfaces[1] && (this.network.interfaces[1].state === "active");
+			}
+		},
+	},
+	mounted() {
+		this.updateValues();
+	},
+	watch: {
+		selectedMachine() {
+			this.updateValues();
+		}
 	}
 }
 </script>
