@@ -700,6 +700,18 @@
       "babystepAmount": " Babystep amount({0})",
       "moveFeedrate": "Wartość posuwu na klik({0})"
     },
+    "settingsNetwork": {
+      "caption": "Sieć",
+      "gateway": "Brama domyślna",
+      "ip": "Adres IP",
+      "netmask": "Maska podsieci",
+      "pass": "Hasło",
+      "ssid": "SSID",
+      "staticIp": "Statyczne IP",
+      "ipInvalid": "Niepoprawne wartości statycznego IP",
+      "passErrorTitle": "Błąd hasła",
+      "passError": "Hasło zbyt krótkie"
+    },
     "settingsNotifications": {
       "caption": "Powiadomienia",
       "notificationErrorsPersistent": "Nie zamykaj komunikatów o błędach automatycznie",
