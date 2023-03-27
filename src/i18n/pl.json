@@ -630,6 +630,9 @@
     "movement": {
       "caption": "Ruch urządzenia",
       "compensation": "Kompensacja i kalibracja",
+      "moveAxis": "Rucj w osi {0}",
+      "moveAxes": "Ruch w osiach {0}",
+      
       "runBed": "True Bed Levelling(G32)",
       "runDelta": "Delta Calibration (G32)",
       "compensationInUse": "Kompensacja w użyciu: {0}",

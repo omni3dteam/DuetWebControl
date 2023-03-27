@@ -647,6 +647,8 @@
     "movement": {
       "caption": "Machine Movement",
       "compensation": "Compensation & Calibration",
+      "moveAxis": "Move {0} axis",
+      "moveAxes": "Move {0} axes",
       "runBed": "True Bed Levelling (G32)",
       "runDelta": "Delta Calibration (G32)",
       "compensationInUse": "Compensation in use: {0}",

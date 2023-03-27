@@ -9,12 +9,6 @@
 <template>
 	<v-card>
 		<v-card-title>
-			<code-btn v-show="visibleAxes.length" color="primary" small code="G28" :disabled="!canHome" :title="$t('button.home.titleAll')" class="ml-0 hidden-sm-and-down">
-				{{ $t('button.home.captionAll') }}
-			</code-btn>
-
-			<v-spacer class="hidden-sm-and-down"></v-spacer>
-
 			<v-icon small class="mr-1">mdi-swap-horizontal</v-icon> {{ $t('panel.movement.caption') }}
 
 			<v-spacer></v-spacer>
@@ -65,51 +59,91 @@
 		</v-card-title>
 
 		<v-card-text v-show="visibleAxes.length !== 0">
-			<!-- Mobile home buttons -->
-			<v-row class="hidden-md-and-up py-2" no-gutters>
-				<v-col>
-					<code-btn color="primary" code="G28" :disabled="!canHome" :title="$t('button.home.titleAll')" block tile>
-						{{ $t('button.home.captionAll') }}
-					</code-btn>
-				</v-col>
-				<template v-if="!isDelta">
-					<v-col v-for="(axis, axisIndex) in visibleAxes" :key="axisIndex">
-						<code-btn :color="axis.homed ? 'primary' : 'warning'" :disabled="!canHome" :title="$t('button.home.title', [axis.letter])" :code="getHomeCode(axis)" block tile>
-							{{ $t('button.home.caption', [axis.letter]) }}
-						</code-btn>
-					</v-col>
-				</template>
+			<v-row class="ml-0 mb-1">
+				<code-btn v-show="visibleAxes.length" color="primary" small code="G28 XY" :disabled="!canHome" :title="$t('button.home.titleAll')" class="ma-2">
+					{{ $t('button.home.caption', [" XY"]) }}
+				</code-btn>
+				<code-btn v-show="visibleAxes.length" color="primary" small code="G28 Z" :disabled="!canHome" :title="$t('button.home.titleAll')" class="ma-2">
+					{{ $t('button.home.caption', [" Z"]) }}
+				</code-btn>
 			</v-row>
+			<v-row>
+				<v-spacer class="hidden-md-and-up"></v-spacer>
+						<v-sheet class="ml-2 mb-2">
+							<v-card-text class="ma-0 ml-3 pa-0">
+								{{ $t("panel.movement.moveAxes", ["XY"])  }}:
+							</v-card-text>
+							<v-card class="pa-2 ma-2 global-control">
+								<div class="pa-0 ma-0 mb-1 d-flex">
+									<v-card-text class="pa-0 ma-0">
+										<strong>X:</strong> {{ xypanel.x }} mm
+									</v-card-text>
+									<v-card-text class="pa-0 ma-0">
+										<strong>Y:</strong> {{ xypanel.y }} mm
+									</v-card-text>
+								</div>
+								<svg width="300" height="300" ref="xypanel" @click="updateCoordinates">
+									<defs>
+										<pattern id="grid" width="20%" height="20%">
+											<rect width="20%" height="20%" fill="none" stroke="#999" />
+										</pattern>
+									</defs>
+									<rect width="100%" height="100%" fill="url(#grid)" />
+									<rect v-if="showXYPanelMessage" x="10" y="10" width="200" height="30" rx="5" fill="#fb8c00" />
+									<text v-if="showXYPanelMessage" x="20" y="30" style="fill:#FFF;">{{ getXYPanelMessage }}</text>
+									<line v-if="xypanel.showCrosshair" :x1="xypanel.pxx" :x2="xypanel.pxx" y1="0%" y2="100%" :stroke="getXYPanelPointColor"></line>
+									<line v-if="xypanel.showCrosshair" :y1="xypanel.pxy" :y2="xypanel.pxy" x1="0%" x2="100%" :stroke="getXYPanelPointColor"></line>
+									<circle v-if="xypanel.showPoint" :cx="xypanel.pxx" :cy="xypanel.pxy" r="5" :fill="getXYPanelPointColor" />
+								</svg>
+							</v-card>
+						</v-sheet>
 
-			<v-row v-for="(axis, axisIndex) in visibleAxes" :key="axisIndex" dense>
-				<!-- Regular home buttons -->
-				<v-col v-if="!isDelta" cols="auto" class="flex-shrink-1 hidden-sm-and-down">
-					<code-btn :color="axis.homed ? 'primary' : 'warning'" :disabled="!canHome" :title="$t('button.home.title', [axis.letter])" :code="getHomeCode(axis)" class="ml-0">
-						{{ $t('button.home.caption', [axis.letter]) }}
-					</code-btn>
-				</v-col>
-
-				<!-- Decreasing movements -->
-				<v-col>
-					<v-row no-gutters>
-						<v-col v-for="index in numMoveSteps" :key="index"  :class="getMoveCellClass(index - 1)">
-							<code-btn :code="getMoveCode(axis, index - 1, true)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, index - 1)" block tile class="move-btn">
-								<v-icon>mdi-chevron-left</v-icon> {{ axis.letter + showSign(-moveSteps(axis.letter)[index - 1]) }}
+				<v-col align-self="center" class="hidden-sm-and-down">
+					<v-sheet width="170" v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
+						<!-- Decreasing movements -->
+						<v-row v-for="index of indicesToShow" :key="index+'-up'">
+							<code-btn :code="getMoveCode(axis, index - 1, true)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, index - 1)" block tile class="move-btn ma-2">
+								<v-icon>mdi-chevron-up</v-icon> {{ axis.letter + showSign(-moveSteps(axis.letter)[index - 1]) }}
 							</code-btn>
-						</v-col>
-					</v-row>
-				</v-col>
-
-				<!-- Increasing movements -->
-				<v-col>
-					<v-row no-gutters>
-						<v-col v-for="index in numMoveSteps" :key="index" :class="getMoveCellClass(numMoveSteps - index)">
-							<code-btn :code="getMoveCode(axis, numMoveSteps - index, false)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, numMoveSteps - index)" block tile class="move-btn">
-								{{ axis.letter + showSign(moveSteps(axis.letter)[numMoveSteps - index]) }} <v-icon>mdi-chevron-right</v-icon>
+						</v-row>
+						
+						<!-- Spacer -->
+						<v-row class="ma-5"></v-row>
+						
+						<!-- Increasing movements -->
+						<v-row v-for="index of indicesToShow" :key="index+'-down'">
+							<code-btn :code="getMoveCode(axis, numMoveSteps - index, false)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, numMoveSteps - index)" block tile class="move-btn ma-2">
+								<v-icon>mdi-chevron-down</v-icon> {{ axis.letter + showSign(moveSteps(axis.letter)[numMoveSteps - index]) }}
 							</code-btn>
-						</v-col>
-					</v-row>
+						</v-row>
+					</v-sheet>
 				</v-col>
+				<v-spacer></v-spacer>
+			</v-row>
+			
+			<v-row class="hidden-md-and-up">
+				<v-spacer></v-spacer>
+				<v-col>
+					<v-sheet width="300" v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
+						<!-- Decreasing movements -->
+						<v-row v-for="index of indicesToShow" :key="index+'-up'">
+							<code-btn :code="getMoveCode(axis, index - 1, true)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, index - 1)" block tile class="move-btn ma-2">
+								<v-icon>mdi-chevron-up</v-icon> {{ axis.letter + showSign(-moveSteps(axis.letter)[index - 1]) }}
+							</code-btn>
+						</v-row>
+						
+						<!-- Spacer -->
+						<v-row class="ma-5"></v-row>
+						
+						<!-- Increasing movements -->
+						<v-row v-for="index of indicesToShow" :key="index+'-down'">
+							<code-btn :code="getMoveCode(axis, numMoveSteps - index, false)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, numMoveSteps - index)" block tile class="move-btn ma-2">
+								<v-icon>mdi-chevron-down</v-icon> {{ axis.letter + showSign(moveSteps(axis.letter)[numMoveSteps - index]) }}
+							</code-btn>
+						</v-row>
+					</v-sheet>
+				</v-col>
+				<v-spacer></v-spacer>	
 			</v-row>
 		</v-card-text>
 
@@ -142,6 +176,7 @@ export default {
 		...mapState('machine/model', ['move', 'state']),
 		...mapState('machine/settings', ['moveFeedrate']),
 		...mapGetters('machine/settings', ['moveSteps', 'numMoveSteps']),
+		//...mapActions('machine', ['sendCode']),
 		isCompensationEnabled() { return this.move.compensation.type.toLowerCase() !== 'none' },
 		visibleAxes() { return this.move.axes.filter(axis => axis.visible); },
 		isDelta() {
@@ -155,6 +190,37 @@ export default {
 				this.state.status !== StatusType.resuming
 			);
 		},
+		getXYPanelPointColor() {
+			return this.$vuetify.theme.dark ? "#EEE" : "#111";
+		},
+		// getXYPanelTextStyle() {
+		// 	return `fill:${this.getXYPanelForegroundColor()};`;
+		// },
+		showXYPanelMessage() {
+			return this.getXYPanelState() < 0;
+		},
+		indicesToShow() {
+			return [1,3,5];
+		},
+		getZAxes() { 
+			return this.move.axes.filter(axis => axis.letter.toLowerCase() == 'z');
+		},
+		getXYPanelMessage() {
+
+			this.updateXYPanelPoint();
+
+			//todo i18n
+			switch(this.getXYPanelState()) {
+				case 0: return "<empty message>"; //should not be visible
+				case -1: return "Not connected";
+				case -2: return "Cannot move when printing";
+				case -3: return "XY homing required";
+				default: break;
+			}
+
+			return "unknown msg";
+		},
+
 		unhomedAxes() { return this.move.axes.filter(axis => axis.visible && !axis.homed); }
 	},
 	data() {
@@ -165,6 +231,15 @@ export default {
 				axis: 'X',
 				index: 0,
 				preset: 0
+			},
+			xypanel: {
+				clicked: false,
+				showPoint: false,
+				showCrosshair: false,
+				pxx:0,
+				pxy:0,
+				x: 0,
+				y: 0
 			}
 		}
 	},
@@ -199,6 +274,58 @@ export default {
 		},
 		moveStepDialogConfirmed(value) {
 			this.setMoveStep({ axis: this.moveStepDialog.axis, index: this.moveStepDialog.index, value });
+		},
+		getAxisByLetter(letter) {
+			return this.move.axes.filter(axis => axis.letter.toLowerCase() == letter.toLowerCase())[0];
+		},
+		// getXYPanelForegroundColor() {
+		// 	return this.$vuetify.theme.dark ? "#EEE" : "#111";
+		// },
+		getXYPanelState() {
+			
+			if (this.uiFrozen) return -1;
+			if (!this.canHome) return -2;
+			if (!this.getAxisByLetter('x').homed || !this.getAxisByLetter('y').homed) return -3;
+
+			return 0;
+		},
+		updateCoordinates(event) {
+			this.xypanel.clicked = true;
+			
+			let box = this.$refs.xypanel.getBoundingClientRect();
+
+			//work area in mm
+			var areaX = this.getAxisByLetter('x').max;
+			var areaY = this.getAxisByLetter('y').max;
+
+			console.log(`read axes max X: ${areaX} Y: ${areaY}` );
+
+			//TODO why Omni500 returns 540x550???
+			if(areaX > 500) areaX = 500;
+			if(areaY > 500) areaY = 500;
+
+			if (this.getXYPanelState() >= 0) {
+				this.xypanel.pxx = event.offsetX;
+				this.xypanel.pxy = event.offsetY;
+
+				this.xypanel.x = Math.round(event.offsetX/box.width*areaX);
+				this.xypanel.y = Math.round((1-(event.offsetY/box.height))*areaY);
+				
+				this.xypanel.showPoint = true;
+				this.xypanel.showCrosshair = true;
+
+				//TODO set F by config, not hard-coded
+				this.sendCode(`G1 X${this.xypanel.x} Y${this.xypanel.y} F8000`);
+				//console.log((`G1 X${this.xypanel.x} Y${this.xypanel.y} F8000`));
+			// } else {
+			// 	console.log('Cannot move axes XY');
+			}		
+			
+			this.updateXYPanelPoint();
+		},
+		updateXYPanelPoint() {
+			this.xypanel.showPoint = this.xypanel.clicked && this.getXYPanelState()>=0;
+			this.xypanel.showCrosshair = this.xypanel.clicked && this.getXYPanelState()>=0;
 		}
 	},
 	watch: {
