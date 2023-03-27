@@ -60,10 +60,10 @@
 
 		<v-card-text v-show="visibleAxes.length !== 0">
 			<v-row class="ml-0 mb-1">
-				<code-btn v-show="visibleAxes.length" color="primary" small code="G28 XY" :disabled="!canHome" :title="$t('button.home.titleAll')" class="ma-2">
+				<code-btn v-show="visibleAxes.length" color="primary" small code="G28 XY" :disabled="!canHome" :title="$t('button.home.title',['XY'])" class="ma-2">
 					{{ $t('button.home.caption', [" XY"]) }}
 				</code-btn>
-				<code-btn v-show="visibleAxes.length" color="primary" small code="G28 Z" :disabled="!canHome" :title="$t('button.home.titleAll')" class="ma-2">
+				<code-btn v-show="visibleAxes.length" color="primary" small code="G28 Z" :disabled="!canHome" :title="$t('button.home.title', ['Z'])" class="ma-2">
 					{{ $t('button.home.caption', [" Z"]) }}
 				</code-btn>
 			</v-row>
@@ -82,15 +82,17 @@
 										<strong>Y:</strong> {{ xypanel.y }} mm
 									</v-card-text>
 								</div>
-								<svg width="300" height="300" ref="xypanel" @click="updateCoordinates">
+								<svg width="350" height="350" ref="xypanel" @click="updateCoordinates">
 									<defs>
 										<pattern id="grid" width="20%" height="20%">
 											<rect width="20%" height="20%" fill="none" stroke="#999" />
 										</pattern>
 									</defs>
 									<rect width="100%" height="100%" fill="url(#grid)" />
-									<rect v-if="showXYPanelMessage" x="10" y="10" width="200" height="30" rx="5" fill="#fb8c00" />
-									<text v-if="showXYPanelMessage" x="20" y="30" style="fill:#FFF;">{{ getXYPanelMessage }}</text>
+									<rect v-if="showXYPanelMessage" x="10" y="10" width="75%" height="30" rx="5" fill="#fb8c00" />
+									<text v-if="showXYPanelMessage" x="20" y="30" style="fill:#FFF;">
+										{{ getXYPanelMessage }}
+									</text>
 									<line v-if="xypanel.showCrosshair" :x1="xypanel.pxx" :x2="xypanel.pxx" y1="0%" y2="100%" :stroke="getXYPanelPointColor"></line>
 									<line v-if="xypanel.showCrosshair" :y1="xypanel.pxy" :y2="xypanel.pxy" x1="0%" x2="100%" :stroke="getXYPanelPointColor"></line>
 									<circle v-if="xypanel.showPoint" :cx="xypanel.pxx" :cy="xypanel.pxy" r="5" :fill="getXYPanelPointColor" />
@@ -98,8 +100,10 @@
 							</v-card>
 						</v-sheet>
 
-				<v-col align-self="center" class="hidden-sm-and-down">
-					<v-sheet width="170" v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
+				<v-spacer class="hidden-md-and-up"></v-spacer>
+
+				<v-col align-self="center" class="hidden-xs-only">
+					<v-sheet width="120" v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
 						<!-- Decreasing movements -->
 						<v-row v-for="index of indicesToShow" :key="index+'-up'">
 							<code-btn :code="getMoveCode(axis, index - 1, true)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, index - 1)" block tile class="move-btn ma-2">
@@ -118,10 +122,10 @@
 						</v-row>
 					</v-sheet>
 				</v-col>
-				<v-spacer></v-spacer>
+				<v-spacer class="hidden-xs-only"></v-spacer>
 			</v-row>
 			
-			<v-row class="hidden-md-and-up">
+			<v-row class="hidden-sm-and-up">
 				<v-spacer></v-spacer>
 				<v-col>
 					<v-sheet width="300" v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
@@ -212,9 +216,9 @@ export default {
 			//todo i18n
 			switch(this.getXYPanelState()) {
 				case 0: return "<empty message>"; //should not be visible
-				case -1: return "Not connected";
-				case -2: return "Cannot move when printing";
-				case -3: return "XY homing required";
+				case -1: return this.$t('panel.movement.xypanel.notConnected');
+				case -2: return this.$t('panel.movement.xypanel.cantMoveWhenPrint');
+				case -3: return this.$t('panel.movement.xypanel.homeRequired');
 				default: break;
 			}
 

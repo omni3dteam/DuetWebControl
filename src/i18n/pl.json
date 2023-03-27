@@ -632,7 +632,11 @@
       "compensation": "Kompensacja i kalibracja",
       "moveAxis": "Rucj w osi {0}",
       "moveAxes": "Ruch w osiach {0}",
-      
+      "xypanel": {
+        "notConnected": "Nie połączono",
+        "cantMoveWhenPrint": "Ruch niemożliwy w trakcie druku",
+        "homeRequired": "Osie XY nie są zbazowane"
+      },
       "runBed": "True Bed Levelling(G32)",
       "runDelta": "Delta Calibration (G32)",
       "compensationInUse": "Kompensacja w użyciu: {0}",

@@ -649,6 +649,11 @@
       "compensation": "Compensation & Calibration",
       "moveAxis": "Move {0} axis",
       "moveAxes": "Move {0} axes",
+      "xypanel": {
+        "notConnected": "Not connected",
+        "cantMoveWhenPrint": "Cannot move when printing",
+        "homeRequired": "XY homing required"
+      },
       "runBed": "True Bed Levelling (G32)",
       "runDelta": "Delta Calibration (G32)",
       "compensationInUse": "Compensation in use: {0}",

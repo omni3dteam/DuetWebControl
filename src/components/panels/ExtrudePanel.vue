@@ -6,6 +6,16 @@
 
 		<v-card-text class="pb-0">
 			<v-row class="pb-1" align="center" justify="center">
+				<v-col>
+					<p class="mb-1">
+					{{ $t('panel.extrude.amount', ['mm']) }}
+					</p>
+					<v-btn-toggle v-model="amount" mandatory class="d-flex">
+						<v-btn v-for="(savedAmount, index) in extruderAmounts" :key="index" :value="savedAmount" :disabled="uiFrozen" @contextmenu.prevent="editAmount(index)" class="flex-grow-1">
+							{{ savedAmount }}
+						</v-btn>
+					</v-btn-toggle>
+				</v-col>
 				<v-col v-if="currentTool && currentTool.extruders.length > 1" cols="auto">
 					<p class="mb-1">
 					{{ $t('panel.extrude.mixRatio') }}
@@ -16,16 +26,6 @@
 						</v-btn>
 						<v-btn text v-for="extruder in currentTool.extruders" :key="extruder" :value="extruder" :disabled="uiFrozen" color="primary">
 							{{ `E${extruder}` }}
-						</v-btn>
-					</v-btn-toggle>
-				</v-col>
-				<v-col>
-					<p class="mb-1">
-					{{ $t('panel.extrude.amount', ['mm']) }}
-					</p>
-					<v-btn-toggle v-model="amount" mandatory class="d-flex">
-						<v-btn v-for="(savedAmount, index) in extruderAmounts" :key="index" :value="savedAmount" :disabled="uiFrozen" @contextmenu.prevent="editAmount(index)" class="flex-grow-1">
-							{{ savedAmount }}
 						</v-btn>
 					</v-btn-toggle>
 				</v-col>
