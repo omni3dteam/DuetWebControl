@@ -89,6 +89,9 @@ textarea {
 			<v-app-bar-nav-icon v-show="!showBottomNavigation" @click.stop="drawer = !drawer">
 				<v-icon>mdi-menu</v-icon>
 			</v-app-bar-nav-icon>
+
+			<v-spacer v-show="isLCD"/>
+
 			<v-toolbar-title class="px-1">
 				<a href="javascript:void(0)" id="title">{{ name }}</a>
 			</v-toolbar-title>
@@ -102,6 +105,7 @@ textarea {
 
 			<upload-btn target="start" :elevation="1" class="mr-3 hidden-sm-and-down"/>
 			<emergency-btn/>
+			<v-spacer v-show="isLCD"/>
 		</v-app-bar>
 
 		<v-main id="content">
@@ -176,7 +180,8 @@ export default {
 			injectedComponents: state => state.uiInjection.injectedComponents
 		}),
 		...mapState('settings',['dashboardMode']),
-		...mapGetters('machine', ['hasTemperaturesToDisplay']),
+		...mapState('machine/model', ['network']),
+		...mapGetters('machine', ['hasTemperaturesToDisplay', 'connector']),
 		...mapGetters('machine/model', ['jobProgress']),
 		categories() {
 			return Object.keys(Menu)
@@ -204,6 +209,9 @@ export default {
 				return !this.machineMode || this.machineMode === MachineMode.fff;
 			}
 			return this.dashboardMode === DashboardMode.fff;
+		},
+		isLCD() {
+			return this.$vuetify.breakpoint.smAndDown && this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
 		},
 		showBottomNavigation() {
 			return this.$vuetify.breakpoint.mobile && !this.$vuetify.breakpoint.xsOnly && this.bottomNavigation;
