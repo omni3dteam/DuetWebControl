@@ -100,10 +100,10 @@
 							</v-card>
 						</v-sheet>
 
-				<v-spacer class="hidden-md-and-up"></v-spacer>
+				<v-spacer></v-spacer>
 
-				<v-col align-self="center" class="hidden-xs-only">
-					<v-sheet width="120" v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
+				<v-col align-self="center" class="hidden-xs-only" cols="4" md="3" sm="3">
+					<v-sheet v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
 						<!-- Decreasing movements -->
 						<v-row v-for="index of indicesToShow" :key="index+'-up'">
 							<code-btn :code="getMoveCode(axis, index - 1, true)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, index - 1)" block tile class="move-btn ma-2">
@@ -112,7 +112,9 @@
 						</v-row>
 						
 						<!-- Spacer -->
-						<v-row class="ma-5"></v-row>
+						<v-row class="ml-0" justify="center">
+							<strong>Z move</strong>
+						</v-row>
 						
 						<!-- Increasing movements -->
 						<v-row v-for="index of indicesToShow" :key="index+'-down'">

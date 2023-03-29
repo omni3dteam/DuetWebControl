@@ -2,7 +2,7 @@
 	<v-row :dense="$vuetify.breakpoint.mobile">
 		<v-col>
 
-			<v-row v-if="isFFForUnset">
+			<v-row v-if="isFFForUnset" class="hidden-md-and-up">
 				<v-col>
 					<extrude-panel></extrude-panel>
 				</v-col>
@@ -12,16 +12,28 @@
 				<v-col>
 					<movement-panel class="mb-2"></movement-panel>
 				</v-col>
+				<v-col class="hidden-sm-and-down"  cols="5">
+					<v-row v-if="isFFForUnset">
+						<v-col>
+							<extrude-panel></extrude-panel>
+						</v-col>
+					</v-row>
+					<v-row>
+						<v-col>
+							<fan-panel></fan-panel>
+						</v-col>
+					</v-row>
+				</v-col>
 			</v-row>
 
-			<v-row>
+			<v-row class="hidden-md-and-up">
 				<v-col>
 					<fan-panel></fan-panel>
 				</v-col>
 			</v-row>
 		</v-col>
 
-		<v-col class="hidden-sm-and-down" sm="4" md="4" lg="3" xl="3">
+		<v-col class="hidden-lg-and-down" sm="3" md="3" lg="3" xl="3">
 			<macro-list></macro-list>
 		</v-col>
 	</v-row>
