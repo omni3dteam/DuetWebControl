@@ -128,11 +128,11 @@ textarea {
 		<v-bottom-navigation v-if="showBottomNavigation" app>
 			<v-menu v-for="(category, index) in bottomTiles" :key="index" top offset-y>
 				<template #activator="{ on }">
-					<v-btn v-on="on" v-if="category.expandable" class="px-0" min-width="70px">
+					<v-btn v-on="on" v-if="category.expandable" class="px-1" min-width="70px">
 						{{ category.translated ? category.caption : $t(category.caption) }}
 						<v-icon v-text="category.icon" class="mb-1"/>
 					</v-btn>
-					<v-btn v-else class="px-0" min-width="70px" :to="category.path" @click.prevent="">
+					<v-btn v-else class="px-1" min-width="70px" :to="category.path" @click.prevent="">
 						{{ category.translated ? category.caption : $t(category.caption) }}
 						<v-icon v-text="category.icon" class="mb-1"/>
 					</v-btn>
@@ -252,8 +252,7 @@ export default {
 			return this.dashboardMode === DashboardMode.fff;
 		},
 		isLCD() {
-			return true;
-			//return this.$vuetify.breakpoint.smAndDown && this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
+			return this.$vuetify.breakpoint.smAndDown && this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
 		},
 		isLockScreen() {
 			return this.$route.path === '/Lock';
