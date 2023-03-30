@@ -66,6 +66,13 @@ export default {
 			staticIp: false,
 			wifiEnabled: true
 		},
+		auth: {
+			pin: "1234",
+			serviceCodes: [
+				{pin: "1111", route:"/Files/System"},
+				{pin: "2222", route:"/Console"},
+			]
+		},
 
 		enabledPlugins: ['Height Map'],
 		plugins: {}									    // Third-party values

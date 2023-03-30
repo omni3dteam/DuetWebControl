@@ -57,7 +57,7 @@ textarea {
 
 <template>
 	<v-app>
-		<v-navigation-drawer v-if="!showBottomNavigation" v-model="drawer" clipped fixed app :width="$vuetify.breakpoint.smAndDown ? 275 : 256" :expand-on-hover="iconMenu" :mini-variant="iconMenu">
+		<v-navigation-drawer v-if="showDrawer" v-model="drawer" clipped fixed app :width="$vuetify.breakpoint.smAndDown ? 275 : 256" :expand-on-hover="iconMenu" :mini-variant="iconMenu">
 			<div class="mb-3 hidden-sm-and-up">
 				<div class="ma-2">
 					<connect-btn v-if="showConnectButton" class="mb-2" block/>
@@ -85,8 +85,8 @@ textarea {
 			</v-list>
 		</v-navigation-drawer>
 
-		<v-app-bar ref="appToolbar" app clipped-left>
-			<v-app-bar-nav-icon v-show="!showBottomNavigation" @click.stop="drawer = !drawer">
+		<v-app-bar ref="appToolbar" app clipped-left v-if="!isLockScreen">
+			<v-app-bar-nav-icon v-show="showDrawer" @click.stop="drawer = !drawer">
 				<v-icon>mdi-menu</v-icon>
 			</v-app-bar-nav-icon>
 
@@ -109,7 +109,7 @@ textarea {
 		</v-app-bar>
 
 		<v-main id="content">
-			<v-container class="hidden-sm-and-down" id="global-container" fluid>
+			<v-container v-if="!isLockScreen" class="hidden-sm-and-down" id="global-container" fluid>
 				<fff-container-panel v-if="isFFForUnset"/>
 				<cnc-container-panel v-else/>
 			</v-container>
@@ -126,12 +126,17 @@ textarea {
 		<notification-display/>
 
 		<v-bottom-navigation v-if="showBottomNavigation" app>
-			<v-menu v-for="(category, index) in categories" :key="index" top offset-y>
+			<v-menu v-for="(category, index) in bottomTiles" :key="index" top offset-y>
 				<template #activator="{ on }">
-					<v-btn v-on="on">
+					<v-btn v-on="on" v-if="category.expandable" class="px-0" min-width="70px">
 						{{ category.translated ? category.caption : $t(category.caption) }}
 						<v-icon v-text="category.icon" class="mb-1"/>
 					</v-btn>
+					<v-btn v-else class="px-0" min-width="70px" :to="category.path" @click.prevent="">
+						{{ category.translated ? category.caption : $t(category.caption) }}
+						<v-icon v-text="category.icon" class="mb-1"/>
+					</v-btn>
+
 				</template>
 
 				<v-list-item v-for="(page, pageIndex) in getPages(category)" :key="`${index}-${pageIndex}`" :to="page.path" @click.prevent="" class="global-control">
@@ -186,7 +191,43 @@ export default {
 		categories() {
 			return Object.keys(Menu)
 				.map(key => Menu[key])
+				.filter(item => !item.lcdOnly || this.isLCD)
 				.filter(item => item.condition || item.pages.some(page => page.condition));
+		},
+		bottomTiles() {
+			let tiles = [];
+
+			for (const i in this.categories) {
+				if (this.categories[i].expandOnBottom ){
+					for (const j in this.categories[i].pages) {
+						if (this.categories[i].inheritIcon) {
+
+							//use icon and title from category, but link to first element
+							tiles.push(Object.assign(
+								this.categories[i].pages[j],
+								{
+									caption: this.categories[i].caption,
+									icon: this.categories[i].icon
+								}
+							));
+							break;
+						}
+
+						//if not inherited, use pages as tiles
+						if (this.categories[i].pages[j].condition && !this.categories[i].pages[j].hidden) {
+							tiles.push(this.categories[i].pages[j]);
+						}
+					}
+				} else {
+					//use categoru as tile
+					tiles.push(Object.assign(
+						this.categories[i],
+						{expandable: true}
+					));
+				}
+			}
+
+			return tiles;
 		},
 		currentPageCondition() {
 			const currentRoute = this.$route;
@@ -211,10 +252,17 @@ export default {
 			return this.dashboardMode === DashboardMode.fff;
 		},
 		isLCD() {
-			return this.$vuetify.breakpoint.smAndDown && this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
+			return true;
+			//return this.$vuetify.breakpoint.smAndDown && this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
+		},
+		isLockScreen() {
+			return this.$route.path === '/Lock';
 		},
 		showBottomNavigation() {
-			return this.$vuetify.breakpoint.mobile && !this.$vuetify.breakpoint.xsOnly && this.bottomNavigation;
+			return !this.isLockScreen && this.$vuetify.breakpoint.mobile && !this.$vuetify.breakpoint.xsOnly && this.bottomNavigation;
+		},
+		showDrawer() {
+			return !this.isLockScreen && !this.showBottomNavigation;
 		}
 	},
 	data() {
@@ -235,7 +283,11 @@ export default {
 			return true;
 		},
 		getPages(category) {
-			return category.pages.filter(page => page.condition);
+			if ('pages' in category) {
+				return category.pages.filter(page => page.condition && !page.hidden);
+			}
+
+			return [];
 		},
 		updateTitle() {
 			if (this.status === StatusType.disconnected) {

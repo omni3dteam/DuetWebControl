@@ -19,17 +19,22 @@ import General from './Settings/General.vue'
 import Machine from './Settings/Machine.vue'
 import Plugins from './Settings/Plugins.vue'
 
+import Lockscreen from './System/Lockscreen.vue'
+
 import Page404 from './Page404.vue'
 
 export const Menu = Vue.observable({
 	Control: {
 		icon: 'mdi-tune',
 		caption: 'menu.control.caption',
+		expandOnBottom: true,
 		pages: []
 	},
 	Job: {
 		icon: 'mdi-printer',
 		caption: 'menu.job.caption',
+		expandOnBottom: true,
+		inheritIcon: true,
 		pages: []
 	},
 	Files: {
@@ -45,6 +50,12 @@ export const Menu = Vue.observable({
 	Settings: {
 		icon: 'mdi-wrench',
 		caption: 'menu.settings.caption',
+		pages: []
+	},
+	System: {
+		icon: 'mdi-power',
+		caption: 'menu.system.caption',
+		lcdOnly: true,
 		pages: []
 	}
 })
@@ -199,6 +210,8 @@ Vue.use(General)
 Vue.use(Machine)
 Vue.use(Plugins)
 
+//System
+Vue.use(Lockscreen)
 // 404 page
 router.addRoute(
     {

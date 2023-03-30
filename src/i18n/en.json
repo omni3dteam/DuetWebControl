@@ -498,6 +498,10 @@
       "caption": "Settings",
       "general": "General",
       "machine": "Machine-Specific"
+    }, 
+    "system": {
+      "caption": "System",
+      "lock": "Lock Screen"
     }
   },
   "notification": {
