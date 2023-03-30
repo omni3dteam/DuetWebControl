@@ -105,19 +105,19 @@
 				<v-col align-self="center" class="hidden-xs-only" cols="4" md="3" sm="3">
 					<v-sheet v-for="(axis, axisIndex) in getZAxes" :key="axisIndex" >	
 						<!-- Decreasing movements -->
-						<v-row v-for="index of indicesToShow" :key="index+'-up'">
+						<v-row v-for="index of indicesToShow" :key="index+'-up'" no-gutters>
 							<code-btn :code="getMoveCode(axis, index - 1, true)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, index - 1)" block tile class="move-btn ma-2">
 								<v-icon>mdi-chevron-up</v-icon> {{ axis.letter + showSign(-moveSteps(axis.letter)[index - 1]) }}
 							</code-btn>
 						</v-row>
 						
 						<!-- Spacer -->
-						<v-row class="ml-0" justify="center">
+						<v-row class="ml-2" justify="center" no-gutters>
 							<strong>Z move</strong>
 						</v-row>
 						
 						<!-- Increasing movements -->
-						<v-row v-for="index of indicesToShow" :key="index+'-down'">
+						<v-row v-for="index of indicesToShow" :key="index+'-down'" no-gutters>
 							<code-btn :code="getMoveCode(axis, numMoveSteps - index, false)" :disabled="!canMove(axis)" no-wait @contextmenu.prevent="showMoveStepDialog(axis.letter, numMoveSteps - index)" block tile class="move-btn ma-2">
 								<v-icon>mdi-chevron-down</v-icon> {{ axis.letter + showSign(moveSteps(axis.letter)[numMoveSteps - index]) }}
 							</code-btn>
