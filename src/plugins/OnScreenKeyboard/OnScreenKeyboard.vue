@@ -47,7 +47,10 @@ export default {
 		...mapState('machine/model', ['network']),
 		...mapGetters('machine', ['connector']),
 		verifiedInput() {
-			return this.isLcd ? this.input : null;
+			return this.isLcd && !this.isLockScreen ? this.input : null;
+		},
+		isLockScreen() {
+			return this.$route.path === '/Lock';
 		},
 		isLcd() {
 			return this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
