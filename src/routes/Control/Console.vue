@@ -22,6 +22,7 @@ export default {
 		registerRoute(this, {
 			Control: {
 				Console: {
+					hidden: true,
 					icon: 'mdi-code-tags',
 					caption: 'menu.control.console',
 					path: '/Console'

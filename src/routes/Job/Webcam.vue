@@ -18,6 +18,7 @@ export default {
 		registerRoute(this, {
 			Job: {
 				Webcam: {
+					hidden: true,
 					icon: 'mdi-webcam',
 					caption: 'menu.job.webcam',
 					path: '/Job/Webcam',

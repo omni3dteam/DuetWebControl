@@ -9,6 +9,7 @@ import HeightMap from './HeightMap.vue'
 registerRoute(HeightMap, {
 	Control: {
 		HeightMap: {
+			hidden: true,
 			icon: 'mdi-grid',
 			caption: 'plugins.heightmap.menuCaption',
 			path: '/HeightMap'
