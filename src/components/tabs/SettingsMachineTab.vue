@@ -22,6 +22,9 @@
 				<v-col cols="12" md="12">
 					<settings-network-panel></settings-network-panel>
 				</v-col>
+				<v-col cols="12" md="12">
+					<settings-pin-panel></settings-pin-panel>
+				</v-col>
 			</v-row>
 		</v-col>
 	</v-row>

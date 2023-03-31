@@ -12,7 +12,7 @@
 		<v-icon size="x-large">mdi-lock</v-icon>
     	<h3 class="text-h4 ma-4">Screen locked</h3>
 		<p class="mb-4">
-			Enter PIN and press <v-icon>mdi-lock-open</v-icon> to log in
+			Enter PIN and press OK to log in
       	</p>
 
 
@@ -40,12 +40,15 @@
             </v-col>
             <v-col cols="4">
                 <v-btn width="100%" class="py-2" @click="pinDigit(0)">
-                    {{ 0 }}
+                    0
                 </v-btn>
             </v-col>
             <v-col cols="4">
                 <v-btn width="100%" class="py-2" @click="checkPin()">
-                    <v-icon>mdi-lock-open</v-icon>
+                    <v-progress-circular indeterminate v-if="unlockProgress"></v-progress-circular>
+                    <v-card-text v-else>
+                        {{  $t('generic.ok') }}
+                    </v-card-text>
                 </v-btn>
             </v-col>
             </v-row>
@@ -81,7 +84,8 @@ export default {
     data() {
         return {
             pin:"",
-            showPin: false
+            showPin: false,
+            unlockProgress: false
         }
     },
     methods: {
@@ -90,15 +94,15 @@ export default {
         },
         checkPin() {
             if (this.pin == this.auth.pin) {
+                this.unlockProgress = true;
                 this.$router.push('/');
+                this.unlockProgress = false;
             } else {
                 //check service codes
                 const serviceCodeEntry = this.auth.serviceCodes.filter((sc) => this.pin == sc.pin);
-                
                 if (serviceCodeEntry.length > 0) {
-                    console.log(serviceCodeEntry[0].route);
+                    this.unlockProgress = true;
                     this.$router.push(serviceCodeEntry[0].route);
-                    //this.$router.push({path: '/Files/System'})
                 } else {
                     this.$makeNotification('error', this.$t('error.invalidPassword'), "",5000);
                 }
