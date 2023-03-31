@@ -73,6 +73,10 @@ export default {
 				{pin: "2222", route:"/Console"},
 			]
 		},
+		autoLogout: {
+			enabled: true,
+			timeout: 300000								//ms
+		},
 
 		enabledPlugins: ['Height Map'],
 		plugins: {}									    // Third-party values

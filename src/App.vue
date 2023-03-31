@@ -181,6 +181,7 @@ export default {
 			machineMode: state => state.machine.model.state.machineMode,
 			bottomNavigation: state => state.settings.bottomNavigation,
 			iconMenu: state => state.settings.iconMenu,
+			autoLogout: state =>state.settings.autoLogout,
 
 			injectedComponents: state => state.uiInjection.injectedComponents
 		}),
@@ -268,6 +269,7 @@ export default {
 		return {
 			drawer: this.$vuetify.breakpoint.lgAndUp,
 			injectedComponentNames: [],
+			activityTimer: undefined,
 			showConnectButton: process.env.NODE_ENV === 'development'
 		}
 	},
@@ -299,10 +301,29 @@ export default {
 				}
 			}
 		},
+		userAction() {
+			
+			if(!this.isLockScreen && this.isLCD && this.autoLogout.enabled ) {
+				if (this.activityTimer) clearTimeout(this.activityTimer);
+				this.activityTimer = setTimeout(this.noActivity, this.autoLogout.timeout);
+			}
+		},
+		noActivity() {
+			if(!this.isLockScreen && this.isLCD && this.autoLogout.enabled) {
+				this.$router.push('/Lock');
+			}
+		}
 	},
 	mounted() {
 		// Attempt to disconnect from every machine when the page is being unloaded
 		window.addEventListener('unload', this.disconnectAll);
+
+		window.addEventListener("mousemove",this.userAction);
+		window.addEventListener("click",this.userAction);
+		window.addEventListener("scroll",this.userAction);
+		
+		//initialize 
+		this.userAction();
 
 		// Connect if running on a board
 		if (process.env.NODE_ENV === 'production') {
