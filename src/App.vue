@@ -139,10 +139,16 @@ textarea {
 
 				</template>
 
-				<v-list-item v-for="(page, pageIndex) in getPages(category)" :key="`${index}-${pageIndex}`" :to="page.path" @click.prevent="" class="global-control">
-					<v-icon v-text="page.icon" class="mr-2"/>
-					{{ page.translated ? page.caption : $t(page.caption) }}
-				</v-list-item>
+				<template v-for="(page, pageIndex) in getPages(category)">
+					<v-list-item v-if="page.path === '/Shutdown'" :key="`${index}-${pageIndex}`" @click="shutdown()" class="global-control">
+						<v-icon v-text="page.icon" class="mr-2"/>
+						{{ page.translated ? page.caption : $t(page.caption) }}
+					</v-list-item>
+					<v-list-item v-else :key="`${index}-${pageIndex}`" :to="page.path" @click.prevent="" class="global-control">
+						<v-icon v-text="page.icon" class="mr-2"/>
+						{{ page.translated ? page.caption : $t(page.caption) }}
+					</v-list-item>
+				</template>
 			</v-menu>
 		</v-bottom-navigation>
 
@@ -253,6 +259,7 @@ export default {
 			return this.dashboardMode === DashboardMode.fff;
 		},
 		isLCD() {
+			//return true;
 			return this.$vuetify.breakpoint.smAndDown && this.network.hostname === (this.connector ? this.connector.hostname : location.hostname);
 		},
 		isLockScreen() {
@@ -276,6 +283,7 @@ export default {
 	methods: {
 		...mapActions(['connect', 'disconnectAll']),
 		...mapActions('settings', ['load']),
+		...mapActions('machine', ['sendCode']),
 		isExpanded(category) {
 			if (this.$vuetify.breakpoint.smAndDown) {
 				const route = this.$route;
@@ -300,6 +308,10 @@ export default {
 					document.title = title;
 				}
 			}
+		},
+		shutdown() {
+			console.log('shutting down')
+			this.sendCode('M98 P"shutdown.g"')
 		},
 		userAction() {
 			

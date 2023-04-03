@@ -20,6 +20,7 @@ import Machine from './Settings/Machine.vue'
 import Plugins from './Settings/Plugins.vue'
 
 import Lockscreen from './System/Lockscreen.vue'
+import Shutdown from './System/Shutdown.vue'
 
 import Page404 from './Page404.vue'
 
@@ -212,6 +213,8 @@ Vue.use(Plugins)
 
 //System
 Vue.use(Lockscreen)
+Vue.use(Shutdown)
+
 // 404 page
 router.addRoute(
     {
