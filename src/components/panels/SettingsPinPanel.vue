@@ -5,7 +5,7 @@
 <template>
 	<v-card outlined>
 		<v-card-title class="pb-0">
-			PIN change
+			{{ $t('panel.settingsPin.caption') }}
 		</v-card-title>
 
 		<v-card-text>
@@ -13,40 +13,47 @@
 			<v-row :dense="$vuetify.breakpoint.mobile">
 
 
-				<v-col cols="12">
+				<v-col cols="12" lg="6" xl="6">
+					<v-row no-gutters>
 					<v-text-field
 						v-model="currentPin"
 						:append-icon="showCurrentPin ? 'mdi-eye' : 'mdi-eye-off'"
 						:type="showCurrentPin ? 'text' : 'password'"
-						label="Current PIN" 
+						:label="$t('panel.settingsPin.currentPin')" 
 						@click:append="showCurrentPin = !showCurrentPin"
 						></v-text-field>
-				</v-col>
-				<v-col cols="12">
+					</v-row>
+					<v-row  no-gutters>
 					<v-text-field
 						v-model="newPin"
 						:append-icon="showNewPin ? 'mdi-eye' : 'mdi-eye-off'"
 						:rules="[rules.required, rules.digitsOnly, rules.len]"
 						:type="showNewPin ? 'text' : 'password'"
-						label="New PIN" 
+						:label="$t('panel.settingsPin.newPin')" 
 						@click:append="showNewPin = !showNewPin"
 						></v-text-field>
-				</v-col>
-				<v-col cols="12">
+					</v-row>
+					<v-row  no-gutters>
 					<v-text-field
 						v-model="retypePin"
 						:append-icon="showRetypePin ? 'mdi-eye' : 'mdi-eye-off'"
 						:rules="[rules.required, rules.digitsOnly, rules.len]"
 						:type="showRetypePin ? 'text' : 'password'"
-						label="Retype PIN" 
+						:label="$t('panel.settingsPin.retypePin')" 
 						@click:append="showRetypePin = !showRetypePin"
 						></v-text-field>
+					</v-row>
+					<v-row no-gutters>
+						<v-btn color="info" @click="send">
+							<v-icon class="mr-2">mdi-send</v-icon> {{ $t("panel.settingsPin.updatePin") }}
+						</v-btn>
+					</v-row>
 				</v-col>
-				
-                <!-- Save/Confirm button somewhere on the bottom -->
-				<v-btn color="info" @click="send">
-					<v-icon class="mr-2">mdi-send</v-icon> {{ $t('input.code.send') }} 
-				</v-btn>
+
+				<v-col cols="12" lg="6" xl="6">
+					<v-select v-model="screenLock" :items="screenLockItems" :label="$t('panel.settingsPin.lockScreenAfter')" hide-details=""></v-select>
+				</v-col>
+
 			</v-row>
 		</v-form>
 		</v-card-text>
@@ -60,9 +67,39 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
 	computed: {
-		...mapState('settings', ['auth']),
+		...mapState(['settings']),
+		...mapState('settings', ['auth','autoLogout']),
 		currentRoute() {
 			return this.$route
+		},
+		screenLockItems() {
+			return [
+				{text:"10 s", value: 10000},
+				{text:"30 s", value: 30000},
+				{text:"1 min", value: 60000},
+				{text:"3 min", value: 180000},
+				{text:"5 min", value: 300000},
+				{text:"10 min", value: 600000},
+				{text:"30 min", value: 1800000},
+				{text: this.$t("panel.settingsPin.never"), value:0}
+			];
+		},
+		screenLock: {
+			get() {
+				if (this.autoLogout.enabled) {
+					return this.autoLogout.timeout;
+				} else {
+					return 0;
+				}
+			},
+			set(value) {
+				if (value === 0) {
+					this.update({ autoLogout: {enabled: false}});
+				} else {
+					this.update({ autoLogout: {enabled: true}});
+					this.update({ autoLogout: {timeout: value}});
+				}
+			}
 		}
 	},
 	data() {
@@ -71,11 +108,9 @@ export default {
 			showNewPin: false,
 			showRetypePin: false,
 			rules: {
-				required: value => !!value || 'Required.',
-				digitsOnly: v => /(^\d+$)/.test(v) || 'only digits 0-9 are allowed',
-				len: v => (v.length >= 4 && v.length <= 8) || '4 - 8 characters',
-				
-				//TODO: add translations
+				required: value => !!value || this.$t("panel.settingsPin.rules.required"),
+				digitsOnly: v => /(^\d+$)/.test(v) || this.$t("panel.settingsPin.rules.digitsOnly"),
+				len: v => (v.length >= 4 && v.length <= 8) || this.$t("panel.settingsPin.rules.chars", [4,8]),
 			},
 			currentPin: '',
 			newPin: '',

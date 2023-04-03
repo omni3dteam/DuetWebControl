@@ -719,6 +719,20 @@
       "passErrorTitle": "Błąd hasła",
       "passError": "Hasło zbyt krótkie"
     },
+    "settingsPin": {
+      "caption": "Blokada ekranu i PIN",
+      "currentPin": "aktulany kod PIN",
+      "newPin": "nowy kod PIN",
+      "retypePin": "powtórz kod PIN",
+      "updatePin": "aktualizuj kod PIN",
+      "lockScreenAfter": "W przypadku nieaktywności zablokuj ekran po",
+      "never":"nigdy",
+      "rules": {
+        "required": "Wymagane",
+        "digitsOnly": "Tylko cyfry (0-9)",
+        "chars": "od {0} do {1} znaków"
+      }
+    },
     "settingsNotifications": {
       "caption": "Powiadomienia",
       "notificationErrorsPersistent": "Nie zamykaj komunikatów o błędach automatycznie",

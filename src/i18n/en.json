@@ -759,6 +759,20 @@
       "passErrorTitle": "Password error",
       "passError": "Password too short"
     },
+    "settingsPin": {
+      "caption": "Screen locking and PIN",
+      "currentPin": "current PIN",
+      "newPin": "new PIN",
+      "retypePin": "retype PIN",
+      "updatePin": "update PIN",
+      "lockScreenAfter": "In case of inactivity lock screen after",
+      "never":"never",
+      "rules": {
+        "required": "Required",
+        "digitsOnly": "only digits (0-9) are allowed",
+        "chars": "{0} - {1} characters"
+      }
+    },
     "settingsNotifications": {
       "caption": "Notifications",
       "notificationErrorsPersistent": "Do not close error messages automatically",
