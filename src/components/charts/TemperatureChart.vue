@@ -7,6 +7,7 @@
 
 .content {
 	position: relative;
+	min-height: 300px;
 }
 
 .content > canvas {
