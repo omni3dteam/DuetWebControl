@@ -482,6 +482,11 @@
       "caption": "Ustawienia",
       "general": "Ogólne",
       "machine": "Specyf. urządz."
+    }, 
+    "system": {
+      "caption": "System",
+      "lock": "Zablokuj ekran",
+      "shutdown": "Wyłącz urządzenie"
     }
   },
   "notification": {
@@ -806,6 +811,10 @@
     "webcam": {
       "caption": "Podgląd obrazu z kamery",
       "alt": "(Obraz z kamery)"
+    },
+    "lockScreen": {
+      "caption": "Ekran zablokowany",
+      "description": "Wpisz kod PIN i wiciśnij {0} aby odblokować"
     }
   },
   "pluginPermissions": {

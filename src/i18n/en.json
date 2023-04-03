@@ -861,6 +861,10 @@
     "webcam": {
       "caption": "Webcam Surveillance",
       "alt": "(webcam image)"
+    },
+    "lockScreen": {
+      "caption": "Screen locked",
+      "description": "Enter PIN i and press {0} to unlock"
     }
   },
   "pluginPermissions": {

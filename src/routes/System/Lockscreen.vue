@@ -10,9 +10,11 @@
     >
     <div>
 		<v-icon size="x-large">mdi-lock</v-icon>
-    	<h3 class="text-h4 ma-4">Screen locked</h3>
+    	<h3 class="text-h4 ma-4">
+            {{ $t('panel.lockScreen.caption') }}
+        </h3>
 		<p class="mb-4">
-			Enter PIN and press OK to log in
+            {{ $t('panel.lockScreen.description',['OK']) }}
       	</p>
 
 
