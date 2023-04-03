@@ -106,10 +106,8 @@ export default {
 				this.$makeNotification('error', 'PIN error', 'New and retyped PIN does not match!',5000);
 				this.clearPins();
 			} else {
-				//console.log("send")
-				//this.auth.pin = this.newPin;
 				this.update({auth: { pin: this.newPin }})
-				this.$makeNotification('success', 'PIN changed successfully',"");
+				this.$makeNotification('success', 'PIN changed successfully',"",5000);
 				
 			}
 		},
@@ -123,7 +121,6 @@ export default {
 	watch: {
 		currentRoute() {
 			//clear entries if route has been changed
-			console.log('route changed');
 			this.clearPins();
 		}
 	}
