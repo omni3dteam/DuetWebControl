@@ -10,7 +10,7 @@
 'use strict'
 
 import { registerRoute } from '..'
-import store from '@/store'
+//import store from '@/store'
 
 export default {
 	install() {
@@ -18,11 +18,10 @@ export default {
 		registerRoute(this, {
 			Job: {
 				Webcam: {
-					hidden: true,
 					icon: 'mdi-webcam',
 					caption: 'menu.job.webcam',
 					path: '/Job/Webcam',
-					condition: () => store.state.settings.webcam.url !== ''
+					condition: () => false
 				}
 			}
 		});

@@ -194,7 +194,6 @@ export function registerSettingTab(general, name, component, caption, translated
 // Control
 Vue.use(Status)
 Vue.use(Dashboard)
-Vue.use(Console)
 
 // Files
 Vue.use(Filaments)
@@ -210,6 +209,7 @@ Vue.use(Webcam)
 Vue.use(General)
 Vue.use(Machine)
 Vue.use(Plugins)
+Vue.use(Console)
 
 //System
 Vue.use(Lockscreen)

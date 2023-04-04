@@ -20,12 +20,12 @@ export default {
 	install() {
 		// Register a route via Control -> Console
 		registerRoute(this, {
-			Control: {
+			Settings: {
 				Console: {
-					hidden: true,
 					icon: 'mdi-code-tags',
 					caption: 'menu.control.console',
-					path: '/Console'
+					path: '/Console',
+					//condition: () => false
 				}
 			}
 		});
