@@ -179,7 +179,6 @@ export default {
 		...mapState({
 			boards: state => state.machine.model.boards,
 			menuDirectory: state => state.machine.model.directories.menu,
-			name: state => state.machine.model.network.name,
 			status: state => state.machine.model.state.status,
 
 			darkTheme: state => state.settings.darkTheme,
@@ -192,9 +191,14 @@ export default {
 			injectedComponents: state => state.uiInjection.injectedComponents
 		}),
 		...mapState('settings',['dashboardMode']),
-		...mapState('machine/model', ['network']),
+		...mapState('machine/model', ['network','global']),
 		...mapGetters('machine', ['hasTemperaturesToDisplay', 'connector']),
 		...mapGetters('machine/model', ['jobProgress']),
+		name() {
+			//get name from globals
+			//if undefined, get machine hostname
+			return this.global.machine_name || this.network.name;
+		},
 		categories() {
 			return Object.keys(Menu)
 				.map(key => Menu[key])
@@ -221,7 +225,7 @@ export default {
 						}
 
 						//if not inherited, use pages as tiles
-						if (this.categories[i].pages[j].condition && !this.categories[i].pages[j].hidden) {
+						if (this.categories[i].pages[j].condition) {
 							tiles.push(this.categories[i].pages[j]);
 						}
 					}
@@ -266,7 +270,7 @@ export default {
 			return this.$route.path === '/Lock';
 		},
 		showBottomNavigation() {
-			return !this.isLockScreen && this.$vuetify.breakpoint.mobile && !this.$vuetify.breakpoint.xsOnly && this.bottomNavigation;
+			return !this.isLockScreen && this.$vuetify.breakpoint.mobile && !this.$vuetify.breakpoint.xsOnly;
 		},
 		showDrawer() {
 			return !this.isLockScreen && !this.showBottomNavigation;
@@ -293,7 +297,7 @@ export default {
 		},
 		getPages(category) {
 			if ('pages' in category) {
-				return category.pages.filter(page => page.condition && !page.hidden);
+				return category.pages.filter(page => page.condition);
 			}
 
 			return [];

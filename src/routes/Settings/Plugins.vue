@@ -49,7 +49,9 @@ export default {
                 Plugins: {
                     icon: 'mdi-power-plug',
                     caption: 'menu.plugins.caption',
-                    path: '/Plugins'
+                    path: '/Plugins',
+                    condition: () => false
+
                 }
             }
         });
