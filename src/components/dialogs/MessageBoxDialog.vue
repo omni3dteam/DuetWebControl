@@ -1,6 +1,11 @@
 <template>
 	<v-dialog v-model="shown" :persistent="persistent">
 		<v-card>
+		<v-card-text class="pa-0" v-if="procedureStarted">
+			<v-alert type="warning" class="mb-0" icon="mdi-polymer">
+				<strong>Procedure in progress</strong>
+			</v-alert>
+		</v-card-text>
 			<v-card-title class="justify-center">
 				<span class="headline">
 					{{ messageBox ? messageBox.title : $t('generic.noValue') }}
@@ -8,6 +13,10 @@
 			</v-card-title>
 
 			<v-card-text>
+				
+				<div class="text-center mt-0 mb-8" v-if="procedureStarted">
+					STEP {{ global.procedure_current_step }} / {{ global.procedure_total_steps }}
+				</div>
 				<!-- Main message -->
 				<div class="text-center" :class="{ 'mb-6': displayedAxes.length }" v-html="messageBox ? messageBox.message : $t('generic.noValue')"></div>
 
@@ -43,6 +52,10 @@
 						</v-row>
 					</v-col>
 				</v-row>
+
+				<div class="text-center mt-8 mb-1" v-if="procedureShowParams" v-html="procedureParseParams">
+				</div>
+
 			</v-card-text>
 
 			<v-card-actions v-if="messageBox && messageBox.mode !== 0">
@@ -70,10 +83,55 @@ export default {
 		...mapState('machine', ['isReconnecting']),
 		...mapState('machine/model', {
 			messageBox: state => state.state.messageBox,
+			global: state => state.global,
+			heat: state => state.heat,
 			move: state => state.move
 		}),
 		...mapState('machine/settings', ['moveFeedrate']),
 		...mapGetters('machine/settings', ['moveSteps', 'numMoveSteps']),
+		procedureStarted() {
+			return this.global.procedure_started;
+			//return true;
+		},
+		procedureShowParams() {
+			return this.global.procedure_started && this.global.procedure_parameters >= 0
+		},
+		procedureParseParams() {
+
+			let output = "";
+			
+			let arg = parseInt(this.global.procedure_parameters);
+
+			let id_t0 = (this.heat.heaters.length > 0) ? 0 : -1
+			let id_t1 = (this.heat.heaters.length > 1) ? 1 : -1
+			let id_b = (this.heat.bedHeaters.length > 0) ? this.heat.bedHeaters[0] : -1
+			let id_ch = (this.heat.chamberHeaters.length > 0) ? this.heat.chamberHeaters[0] : -1
+			
+			//t0
+			if (Array(0,5,6,7).includes(arg)) {
+				output += `T0: ${this.currentTempOf(this.heat.heaters,id_t0)} / ${this.setTempOf(this.heat.heaters,id_t0)}  `;
+			}
+			//t1
+			if (Array(1,5,6,7).includes(arg)) {
+				output += `T1: ${this.currentTempOf(this.heat.heaters,id_t1)} / ${this.setTempOf(this.heat.heaters,id_t1)}  `;
+			}
+
+			if (arg >= 6) {
+				output += `<br>`
+			}
+
+			//bed
+			if (Array(2,4,6,7).includes(arg)) {
+				output += `B: ${this.currentTempOf(this.heat.heaters,id_b)} / ${this.setTempOf(this.heat.heaters,id_b)}  `;
+			}
+
+			//chamber
+			if (Array(3,4,7).includes(arg)) {
+				output += `Ch: ${this.currentTempOf(this.heat.heaters,id_ch)} / ${this.setTempOf(this.heat.heaters,id_ch)}  `;
+			}
+			
+			return output
+		},
 		displayedAxes() {
 			const axisControls = this.messageBox ? this.messageBox.axisControls : 0;
 			return this.move.axes.filter((axis, index) => axis.visible && ((axisControls & (1 << index)) !== 0));
@@ -124,8 +182,17 @@ export default {
 		async cancel() {
 			this.shown = false;
 			if (this.messageBox && (this.messageBox.mode === MessageBoxMode.okCancel)) {
-				await this.sendCode('M292 P1');
+				//send cancel feedback and procedure restart
+				await this.sendCode('M292 P1').then(() => {this.sendCode('M1293')})
 			}
+		},
+		currentTempOf(heaters,id) {
+			if (id < 0 || heaters[id] == null) return "n/a"
+			return Math.round(heaters[id].current)+" °C"
+		},
+		setTempOf(heaters,id) {
+			if (id < 0 || heaters[id] == null ) return "n/a"
+			return Math.round(heaters[id].active)+" °C"
 		}
 	},
 	watch: {
