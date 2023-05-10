@@ -2,7 +2,7 @@
 
 $ip=$args[0]
 
-#npm run build
+npm run build
 scp .\dist\DuetWebControl-SBC.zip pi@192.168.1.${ip}:/tmp
 ssh pi@192.168.1.${ip} "
     rm -rf /tmp/dwc &&
