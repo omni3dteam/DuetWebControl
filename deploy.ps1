@@ -5,9 +5,10 @@ $ip=$args[0]
 npm run build
 scp .\dist\DuetWebControl-SBC.zip pi@192.168.1.${ip}:/tmp
 ssh pi@192.168.1.${ip} "
+    rm -r /home/pi/.cache/chromium/* &&
     rm -rf /tmp/dwc &&
     mkdir /tmp/dwc &&
     unzip /tmp/DuetWebControl-SBC.zip -d /tmp/dwc &&
-    sudo -u dsf cp -rv /tmp/dwc/* /opt/dsf/dwc/
-    sudo systemctl restart duetwebserver
-"
+    sudo -u dsf cp -rv /tmp/dwc/* /opt/dsf/dwc/ &&
+    sudo systemctl restart duetwebserver"
+

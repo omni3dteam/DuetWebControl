@@ -117,7 +117,7 @@ export default {
 					return;
 				}
 			}
-			if (this.pass.length < 8) {
+			if (this.wifiEnabled && this.pass.length < 8) {
 				this.$makeNotification('error', this.$t(`panel.settingsNetwork.passErrorTitle`), this.$t(`panel.settingsNetwork.passError`));
 				return;
 			}
